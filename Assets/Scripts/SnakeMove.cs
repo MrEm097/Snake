@@ -13,7 +13,7 @@ public class SnakeMove : MonoBehaviour
 
     void Start()
     {
-        Debug.Log("Пошли все нахуй");
+
     }
 
     void Update()

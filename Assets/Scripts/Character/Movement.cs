@@ -1,9 +1,9 @@
 using UnityEngine;
 
-public class SnakeMove : MonoBehaviour
+public class Movement : MonoBehaviour
 {
     // Как часто змейка делает шаг (в секундах)
-    public float stepInterval = 0.3f;
+    [SerializeField] float stepInterval = 0.3f;
 
     // Текущее направление движения
     private Vector3 directionMove = Vector3.forward;

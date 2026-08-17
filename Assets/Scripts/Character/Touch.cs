@@ -19,7 +19,7 @@ public class Touch : MonoBehaviour
             // SpawnNewApple(); // Появление нового яблока
         }
 
-        if (nameObject == "Wall_F" || nameObject == "Wall_B" || nameObject == "Wall_R" || nameObject == "Wall_L")
+        if (nameObject == "Wall_F" || nameObject == "Wall_B" || nameObject == "Wall_R" || nameObject == "Wall_L" || nameObject == "SnakeBody")
         {
             Debug.Log("You are dead");
             EndGame();
@@ -37,4 +37,14 @@ public class Touch : MonoBehaviour
 
     }
 
+    private void GrowSnake()
+    {
+        GameObject newBody = Instantiate(tailPrefab, transform.position, Quaternion.identity);
+        bodyList.Add(newBody.transform);
+    }
+
+    private void SpawnNewApple()
+    {
+
+    }
 }

@@ -3,8 +3,8 @@ using UnityEngine;
 
 public class SnakeController : MonoBehaviour
 {
-    [SerializeField] GameObject tailPrefab;
-    private List<Transform> bodyList = new List<Transform>();
+    public GameObject tailPrefab;
+    public List<Transform> bodyList = new List<Transform>();
 
     void Start()
     {

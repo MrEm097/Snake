@@ -6,6 +6,7 @@ using UnityEditor;
 
 public class Touch : MonoBehaviour
 {
+    private int countPoints = 0;
     private SnakeController snakeController;
 
     void Start()
@@ -14,18 +15,18 @@ public class Touch : MonoBehaviour
     }
     private void OnTriggerEnter(Collider other) // Реагировние на любой встречный объект
     {
-        string nameObject = other.gameObject.name;
-
-        if (nameObject == "Apple")
+        if (other.CompareTag("Apple"))
         {
+            countPoints += 1;
+            Debug.Log($"You have {countPoints} points!");
+
             GrowSnake();
 
             SpawnNewApple(other);
         }
 
-        if (nameObject == "Wall_F" || nameObject == "Wall_B" || nameObject == "Wall_R" || nameObject == "Wall_L" /*|| nameObject == "SnakeBody(Clone)"*/)
+        if (other.CompareTag("Body") || other.CompareTag("Wall"))
         {
-            Debug.Log("You are dead");
             EndGame();
         }
 
@@ -33,17 +34,14 @@ public class Touch : MonoBehaviour
 
     private void EndGame() // Завершает игру
     {
-#if UNITY_EDITOR
-        EditorApplication.isPlaying = false;
-#else
-        Application.Quit();
-#endif
-
+        Debug.Log("You crashed");
+        Time.timeScale = 0f;
     }
 
     private void GrowSnake() // Удлиняется хвост
     {
-        GameObject newBody = Instantiate(snakeController.tailPrefab, transform.position, Quaternion.identity);
+        Vector3 lastBody = snakeController.bodyList[snakeController.bodyList.Count - 1].position;
+        GameObject newBody = Instantiate(snakeController.tailPrefab, lastBody, Quaternion.identity);
         snakeController.bodyList.Add(newBody.transform);
     }
 

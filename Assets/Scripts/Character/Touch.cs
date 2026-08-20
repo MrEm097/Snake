@@ -40,19 +40,41 @@ public class Touch : MonoBehaviour
 
     private void GrowSnake() // Удлиняется хвост
     {
-        Vector3 lastBody = snakeController.bodyList[snakeController.bodyList.Count - 1].position;
-        GameObject newBody = Instantiate(snakeController.tailPrefab, lastBody, Quaternion.identity);
+        Vector3 spawnHidden = new Vector3(100, 100, 100);
+        GameObject newBody = Instantiate(snakeController.tailPrefab, spawnHidden, Quaternion.identity);
         snakeController.bodyList.Add(newBody.transform);
     }
 
-    private void SpawnNewApple(Collider other) // Появление нового яблока
+    private void SpawnNewApple(Collider appleCollider) // Появление нового яблока
     {
-        float randomX = Random.Range(-13f, 13f);
-        float randomZ = Random.Range(-13f, 13f);
+        Vector3 newApplePos = Vector3.zero;
 
-        other.transform.position = new Vector3(randomX, 1f, randomZ);
+        bool freeSpace = true;
+
+        while (freeSpace)
+        {
+            float randomX = Mathf.Round( Random.Range(-5f, 5f) );
+            float randomZ = Mathf.Round( Random.Range(-5f, 5f) );
+
+            newApplePos = new Vector3(randomX, 1f, randomZ);
+
+            freeSpace = false;
+
+            foreach(Transform part in snakeController.bodyList)
+            {
+                if (Vector3.Distance(newApplePos, part.position) < 0.9f)
+                {
+                    freeSpace = true; 
+                    break;
+                }
+            }
+        }
+
+        appleCollider.transform.position = newApplePos;
     }
 }
 
-// 1) Появление яблока вне зоны хвоста
-// 2) Организация префабов (Хвоста)
+// 1) Исправить баг с кнопками wasd
+// 2) Сделать уже наконец UI
+
+// ....может быть добавлю стены

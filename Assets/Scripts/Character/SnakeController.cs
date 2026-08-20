@@ -4,9 +4,9 @@ using UnityEngine;
 
 public class SnakeController : MonoBehaviour
 {
-    public GameObject tailPrefab;
+    public GameObject tailPrefab; // Кусок хвоста змеи
 
-    public List<Transform> bodyList = new List<Transform>();
+    public List<Transform> bodyList = new List<Transform>(); // Список кусочков змеи
 
     [SerializeField] Vector3 moveDirection = Vector3.forward; // Дефолтное направление
 
@@ -17,32 +17,40 @@ public class SnakeController : MonoBehaviour
 
     void Start()
     {
-        bodyList.Add(this.transform); // В начале только башка
+        bodyList.Add(this.transform); // В начале только появляется башка
 
         StartCoroutine( MovementBody() );
     }
 
     private void Update()
     {
-        // Меняем вектор по кнопку И учитываем механику змейки
+        // Меняем вектор по кнопке, и учитываем механику змейки, что нельзя поворачивать внутрь хвоста
         if (Input.GetKeyDown(KeyCode.W) && moveDirection != Vector3.back) moveDirection = Vector3.forward;
         if (Input.GetKeyDown(KeyCode.S) && moveDirection != Vector3.forward) moveDirection = Vector3.back;
         if (Input.GetKeyDown(KeyCode.A) && moveDirection != Vector3.right) moveDirection = Vector3.left;
         if (Input.GetKeyDown(KeyCode.D) && moveDirection != Vector3.left) moveDirection = Vector3.right;
     }
 
-    IEnumerator MovementBody() // Доделать нахуй
+    IEnumerator MovementBody() 
     {
         while (true)
         {
-            // Смещаем хвост, кусок звоста появляется там где был предыдущий
-            for (int i = bodyList.Count - 1; i > 0;  i--)
-            {
-                bodyList[i].position = bodyList[i - 1].position; 
-            }
+            Vector3 previousPosition = transform.position; // Запоминаем место где раньше была башка
 
-            // Смещаем голову
-            transform.position += moveDirection * stepSize;
+            transform.position += moveDirection * stepSize; // Двигаем голову
+
+            if ( bodyList.Count > 1 )
+            {
+                // Присваиваем место где до сдвига была башка
+                Vector3 targetPos = previousPosition;
+
+                for (int i = 1; i < bodyList.Count; i++)
+                {
+                    Vector3 tempPos = bodyList[i].position;
+                    bodyList[i].position = targetPos;
+                    targetPos = tempPos;
+                }
+            }
 
             // Waiting...
             yield return new WaitForSeconds( stepDelay );

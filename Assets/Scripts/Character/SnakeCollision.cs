@@ -1,24 +1,35 @@
 using UnityEngine;
+using TMPro;
 
-#if UNITY_EDITOR
-using UnityEditor;
-#endif
-
-public class Touch : MonoBehaviour
+public class SnakeCollision : MonoBehaviour
 {
     private int countPoints = 0;
     private SnakeController snakeController;
 
+    // UI
+    [SerializeField] private TextMeshProUGUI pointsText;
+    [SerializeField] private TextMeshProUGUI endGameText;
+    [SerializeField] private GameObject endGamePanel;
+
+    [SerializeField] private int maxCountPoints = 100;
+
     void Start()
     {
         snakeController = GetComponent<SnakeController>();
+
+        pointsText.text = "Points: 0";
     }
+
     private void OnTriggerEnter(Collider other) // Реагировние на любой встречный объект
     {
         if (other.CompareTag("Apple"))
         {
-            countPoints += 1;
-            Debug.Log($"You have {countPoints} points!");
+            pointsText.text = $"Points: {countPoints += 1}";
+
+            if (maxCountPoints == countPoints)
+            {
+                EndGame("WIN!", Color.green);
+            }
 
             GrowSnake();
 
@@ -27,15 +38,18 @@ public class Touch : MonoBehaviour
 
         if (other.CompareTag("Body") || other.CompareTag("Wall"))
         {
-            EndGame();
+            EndGame("CRASHED", Color.red);
         }
 
     }
 
-    private void EndGame() // Завершает игру
+    private void EndGame(string massage, Color color) // Завершает игру
     {
-        Debug.Log("You crashed");
         Time.timeScale = 0f;
+
+        endGameText.text = massage;
+        endGameText.color = color;
+        endGamePanel.SetActive(true);
     }
 
     private void GrowSnake() // Удлиняется хвост
@@ -73,8 +87,3 @@ public class Touch : MonoBehaviour
         appleCollider.transform.position = newApplePos;
     }
 }
-
-// 1) Исправить баг с кнопками wasd
-// 2) Сделать уже наконец UI
-
-// ....может быть добавлю стены

@@ -14,6 +14,7 @@ public class SnakeController : MonoBehaviour
 
     [SerializeField] float stepSize = 1f; // Какой шаг
 
+    [SerializeField] bool inputFlag = true; // Нужно для условия в котором запрещается больше одного поворота за одно движение
 
     void Start()
     {
@@ -22,13 +23,31 @@ public class SnakeController : MonoBehaviour
         StartCoroutine( MovementBody() );
     }
 
-    private void Update()
+    private void Update() // Меняем вектор по кнопке, и учитываем механику змейки, что нельзя поворачивать внутрь хвоста
     {
-        // Меняем вектор по кнопке, и учитываем механику змейки, что нельзя поворачивать внутрь хвоста
-        if (Input.GetKeyDown(KeyCode.W) && moveDirection != Vector3.back) moveDirection = Vector3.forward;
-        if (Input.GetKeyDown(KeyCode.S) && moveDirection != Vector3.forward) moveDirection = Vector3.back;
-        if (Input.GetKeyDown(KeyCode.A) && moveDirection != Vector3.right) moveDirection = Vector3.left;
-        if (Input.GetKeyDown(KeyCode.D) && moveDirection != Vector3.left) moveDirection = Vector3.right;
+        if (Input.GetKeyDown(KeyCode.W) && moveDirection != Vector3.back && inputFlag)
+        {
+            moveDirection = Vector3.forward; 
+            inputFlag = false;
+        }
+        
+        if (Input.GetKeyDown(KeyCode.S) && moveDirection != Vector3.forward && inputFlag)
+        {
+            moveDirection = Vector3.back; 
+            inputFlag = false;
+        }
+
+        if (Input.GetKeyDown(KeyCode.A) && moveDirection != Vector3.right && inputFlag)
+        {
+            moveDirection = Vector3.left; 
+            inputFlag = false;
+        }
+
+        if (Input.GetKeyDown(KeyCode.D) && moveDirection != Vector3.left && inputFlag)
+        {
+            moveDirection = Vector3.right; 
+            inputFlag = false;
+        }
     }
 
     IEnumerator MovementBody() 
@@ -51,6 +70,8 @@ public class SnakeController : MonoBehaviour
                     targetPos = tempPos;
                 }
             }
+
+            inputFlag = true;
 
             // Waiting...
             yield return new WaitForSeconds( stepDelay );
